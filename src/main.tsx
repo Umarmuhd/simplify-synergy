@@ -8,6 +8,14 @@ import ErrorPage from "./pages/error-page.jsx";
 import { TransactionDetails } from "./components/transactions/details.tsx";
 import TransactionPages from "./pages/transactions-page.tsx";
 import { DashboardLayout } from "./components/layouts/dashboard-layout.tsx";
+import client from "./data/client/index.ts";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 
 const router = createBrowserRouter([
   {
@@ -33,13 +41,23 @@ const router = createBrowserRouter([
             element: <TransactionDetails />,
           },
         ],
+        loader: async () => {
+          const result = await client.transactions.paginated({});
+          return result;
+        },
       },
     ],
   },
 ]);
 
+// Create a client
+const queryClient = new QueryClient();
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    {/* // Provide the client to your App */}
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </StrictMode>
 );

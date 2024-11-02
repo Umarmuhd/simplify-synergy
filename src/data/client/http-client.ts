@@ -1,10 +1,11 @@
+import { ConfigValues } from "@/config";
 import type { SearchParamOptions } from "@/types";
 import axios from "axios";
 // import { getAuthToken, removeAuthToken } from "./token.utils";
 
 // TODO: Due to windows timeout was set to 15000
 const Axios = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_REST_API_ENDPOINT,
+  baseURL: ConfigValues.api_base_url,
   timeout: 150000000,
   headers: {
     "Content-Type": "application/json",

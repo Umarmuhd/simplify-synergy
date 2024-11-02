@@ -20,48 +20,14 @@ import {
 import TransactionList from "@/components/transactions/list";
 import { useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-
-const transactions = [
-  {
-    id: 1,
-    name: "Phillip Mango",
-    email: "phillipmango@gmail.com",
-    date: "Jun 6th 2020",
-    amount: "1000 CAD",
-    convertedAmount: "3900 BRL",
-    status: "COMPLETED",
-  },
-  {
-    id: 2,
-    name: "Phillip Mango",
-    email: "phillipmango@gmail.com",
-    date: "Jun 1st 2020",
-    amount: "1000 CAD",
-    convertedAmount: "3900 BRL",
-    status: "COMPLETED",
-  },
-  {
-    id: 3,
-    name: "Erin Culhane",
-    email: "ericulhane@gmail.com",
-    date: "May 17th 2020",
-    amount: "1000 CAD",
-    convertedAmount: "3900 BRL",
-    status: "PENDING",
-  },
-  {
-    id: 4,
-    name: "Erin Culhane",
-    email: "ericulhane@gmail.com",
-    date: "May 17th 2020",
-    amount: "1000 CAD",
-    convertedAmount: "3900 BRL",
-    status: "CANCELLED",
-  },
-];
+import { useTransactionsQuery } from "@/data/transactions";
 
 export default function TransactionPages({ props }: any) {
   const { pathname } = useLocation();
+  console.log("pathname", pathname);
+  console.log("props", props);
+
+  // const { transactions, error, loading } = useTransactionsQuery({});
 
   return (
     <div className="py-4">
@@ -140,7 +106,26 @@ export default function TransactionPages({ props }: any) {
             </div>
           </Card> */}
           <Card>
-            <TransactionList />
+            <Table className="bg-white">
+              <TableCaption>A list of your recent invoices.</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px] py-3">Invoice</TableHead>
+                  <TableHead className="py-3">Status</TableHead>
+                  <TableHead className="py-3">Method</TableHead>
+                  <TableHead className="text-right py-3">Amount</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TransactionList transactions={[]} />
+              <TableFooter>
+                <TableRow>
+                  <TableCell className="py-3" colSpan={3}>
+                    Total
+                  </TableCell>
+                  <TableCell className="text-right py-3">$2,500.00</TableCell>
+                </TableRow>
+              </TableFooter>
+            </Table>
           </Card>
         </div>
         {pathname.split("/").length > 3 && (

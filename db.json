@@ -1,10 +1,12 @@
-[
-  {
-    "id": "TRX001",
-    "amount": 1500.0,
-    "status": "Completed",
-    "date": "2024-10-28",
-    "type": "inflow",
-    "purpose": "Withdrawal"
-  }
-]
+{
+  "transactions": [
+    {
+      "id": "TRX001",
+      "amount": 1500.0,
+      "status": "Completed",
+      "date": "2024-10-28",
+      "type": "inflow",
+      "purpose": "Withdrawal"
+    }
+  ]
+}
