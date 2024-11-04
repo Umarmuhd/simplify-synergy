@@ -3,6 +3,7 @@ import {
   AddTransactionPayload,
   Transaction,
   TransactionQueryOptions,
+  UpdateTransactionPayload,
 } from "@/types/transaction";
 import { useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "./client/api-endpoints";
@@ -30,18 +31,43 @@ export const useCreateTransactionMutation = () => {
   return mutation;
 };
 
-// export const useProductQuery = ({ slug, language }: GetParams) => {
-//   const { data, error, isLoading } = useQuery<Product, Error>(
-//     [API_ENDPOINTS.PRODUCTS, { slug, language }],
-//     () => productClient.get({ slug, language })
-//   );
+export const useEditTransactionMutation = (id?: string) => {
+  const queryClient = useQueryClient();
 
-//   return {
-//     product: data,
-//     error,
-//     isLoading,
-//   };
-// };
+  const mutation = useMutation<Transaction, Error, UpdateTransactionPayload>({
+    mutationFn: async (json) => {
+      return await client.transactions.update({ id: id as string, ...json });
+    },
+    onSuccess: () => {
+      toast.success("Transaction updated");
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.TRANSACTIONS, { id }],
+      });
+      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.TRANSACTIONS] });
+      //TODO: Invalidate summary
+    },
+    onError: () => {
+      toast.error("Failed to edit transaction");
+    },
+  });
+
+  return mutation;
+};
+
+export const useGetTransaction = (id?: string) => {
+  const query = useQuery({
+    enabled: !!id,
+    queryKey: [API_ENDPOINTS.TRANSACTIONS, { id }],
+    queryFn: async () => {
+      return await client.transactions.get({
+        id: id as string,
+        language: "en",
+      });
+    },
+  });
+
+  return query;
+};
 
 export const useTransactionsQuery = (
   params: Partial<TransactionQueryOptions>,
@@ -60,4 +86,29 @@ export const useTransactionsQuery = (
     error,
     loading: isLoading,
   };
+};
+
+export const useDeleteTransaction = (id?: string) => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation<unknown, Error>({
+    mutationFn: async (_json) => {
+      return await client.transactions.delete({
+        id: id as string,
+      });
+    },
+    onSuccess: () => {
+      toast.success("Transaction deleted");
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.TRANSACTIONS, { id }],
+      });
+      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.TRANSACTIONS] });
+      //TODO: Invalidate summary
+    },
+    onError: () => {
+      toast.error("Failed to delete transaction");
+    },
+  });
+
+  return mutation;
 };

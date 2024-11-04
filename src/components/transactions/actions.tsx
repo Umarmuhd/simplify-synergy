@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,12 +5,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useDeleteTransaction } from "@/data/transactions";
 import useConfirm from "@/hooks/use-confirm";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
-
-// import { useOpenAccount } from "@/features/accounts/hooks/use-open-account";
-// import { useDeleteAccount } from "@/features/accounts/api/use-delete-account";
-// import useConfirm from "@/hooks/use-confirm";
+import { useTransaction } from "./hooks/use-transaction";
 
 type Props = {
   id: string;
@@ -20,17 +16,17 @@ type Props = {
 
 export const Actions = ({ id }: Props) => {
   const [ConfirmDialog, confirm] = useConfirm(
-    "Are you sure you want to delete this account?",
-    "You are about to delete this account."
+    "Are you sure you want to delete this transactions?",
+    "You are about to delete this transactions."
   );
 
-  // const deleteMutation = useDeleteAccount(id);
-  // const { onOpen } = useOpenAccount();
+  const deleteMutation = useDeleteTransaction(id);
+  const { onOpen } = useTransaction();
 
   const handleDelete = async () => {
     const ok = await confirm();
     if (ok) {
-      // deleteMutation.mutate();
+      deleteMutation.mutate();
     }
   };
 
@@ -47,14 +43,14 @@ export const Actions = ({ id }: Props) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem
-          // disabled={deleteMutation.isPending}
-          // onClick={() => onOpen(id)}
+            disabled={deleteMutation.isPending}
+            onClick={() => onOpen({ id })}
           >
             <Edit className="size-5 mr-2" />
             Edit
           </DropdownMenuItem>
           <DropdownMenuItem
-            // disabled={deleteMutation.isPending}
+            disabled={deleteMutation.isPending}
             onClick={handleDelete}
           >
             <Trash className="size-5 mr-2" />

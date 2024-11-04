@@ -1,7 +1,12 @@
-import { Transaction, TransactionQueryOptions } from "@/types/transaction";
+import {
+  Transaction,
+  TransactionQueryOptions,
+  AddTransactionPayload,
+  UpdateTransactionPayload,
+} from "@/types/transaction";
 import { HttpClient } from "./http-client";
 import { API_ENDPOINTS } from "./api-endpoints";
-import { AddTransactionPayload } from "@/types/transaction";
+import { GetParams } from "@/types/index";
 
 class Client {
   transactions = {
@@ -31,6 +36,21 @@ class Client {
     },
     create(data: AddTransactionPayload) {
       return HttpClient.post<Transaction>(API_ENDPOINTS.TRANSACTIONS, data);
+    },
+    update({
+      id,
+      ...input
+    }: Partial<UpdateTransactionPayload> & { id: string }) {
+      return HttpClient.put<Transaction>(
+        `${API_ENDPOINTS.TRANSACTIONS}/${id}`,
+        input
+      );
+    },
+    delete({ id }: { id: string }) {
+      return HttpClient.delete<boolean>(`${API_ENDPOINTS.TRANSACTIONS}/${id}`);
+    },
+    get({ id }: GetParams) {
+      return HttpClient.get<Transaction>(`${API_ENDPOINTS.TRANSACTIONS}/${id}`);
     },
   };
 }

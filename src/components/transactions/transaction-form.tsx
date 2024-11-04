@@ -22,6 +22,8 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Loader2 } from "lucide-react";
+
 import {
   Form,
   FormControl,
@@ -49,7 +51,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTransaction } from "./hooks/use-transaction";
-import { useCreateTransactionMutation } from "@/data/transactions";
+import {
+  useCreateTransactionMutation,
+  useEditTransactionMutation,
+  useGetTransaction,
+} from "@/data/transactions";
+import { LoaderCircleIcon } from "lucide-react";
 
 const formSchema = z.object({
   status: z.string().min(2, {
@@ -62,18 +69,24 @@ const formSchema = z.object({
     required_error: "A valid amount is required.",
   }),
 });
-type Props = {
-  transaction?: { [x: string]: string | number };
-};
-export function TransactionFormModal({ transaction }: Props) {
+
+export function TransactionFormModal() {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const { isOpen, onClose } = useTransaction();
 
+  const { data } = useTransaction();
+
+  const transactionQuery = useGetTransaction(data?.id);
+
+  const isLoading = transactionQuery.isLoading;
+
   const initialValues = {
-    amount: transaction?.amount ?? "",
-    date: transaction?.date ? new Date(transaction.date) : new Date(),
-    status: transaction?.type ?? "",
+    amount: transactionQuery.data?.amount ?? "",
+    date: transactionQuery.data?.date
+      ? new Date(transactionQuery.data.date)
+      : new Date(),
+    status: transactionQuery.data?.status ?? "",
   };
 
   if (isDesktop) {
@@ -82,15 +95,24 @@ export function TransactionFormModal({ transaction }: Props) {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>
-              {transaction ? "Update Transaction" : "New Transaction"}
+              {data ? "Update Transaction" : "New Transaction"}
             </DialogTitle>
             <DialogDescription>
-              {transaction
-                ? "Add new transaction details"
-                : "Update transaction details"}
+              {data
+                ? "Update transaction details"
+                : "Add new transaction details"}
             </DialogDescription>
           </DialogHeader>
-          <TransactionForm initialValues={initialValues} />
+          {isLoading ? (
+            <div
+              className="absolute inset-0 flex items-center 
+          justify-center"
+            >
+              <Loader2 className="size-4 text-muted-foreground animate-spin" />
+            </div>
+          ) : (
+            <TransactionForm initialValues={initialValues} />
+          )}
         </DialogContent>
       </Dialog>
     );
@@ -101,15 +123,24 @@ export function TransactionFormModal({ transaction }: Props) {
       <DrawerContent>
         <DrawerHeader className="text-left">
           <DrawerTitle>
-            {transaction ? "Update Transaction" : "New Transaction"}
+            {data ? "Update Transaction" : "New Transaction"}
           </DrawerTitle>
           <DrawerDescription>
-            {transaction
+            {data
               ? "Add new transaction details"
               : "Update transaction details"}
           </DrawerDescription>
         </DrawerHeader>
-        <TransactionForm initialValues={initialValues} className="px-4" />
+        {isLoading ? (
+          <div
+            className="absolute inset-0 flex items-center 
+          justify-center"
+          >
+            <Loader2 className="size-4 text-muted-foreground animate-spin" />
+          </div>
+        ) : (
+          <TransactionForm initialValues={initialValues} className="px-4" />
+        )}
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
@@ -125,7 +156,7 @@ type FormProps = React.ComponentProps<"form"> & {
 };
 
 function TransactionForm({ className, initialValues }: FormProps) {
-  const { onClose } = useTransaction();
+  const { onClose, data } = useTransaction();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -137,20 +168,30 @@ function TransactionForm({ className, initialValues }: FormProps) {
 
   const mutation = useCreateTransactionMutation();
 
+  const editMutation = useEditTransactionMutation(data?.id);
+
+  const loading = mutation.isPending || editMutation.isPending;
+
   // 2. Define a submit handler.
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    mutation.mutate(
-      {
-        ...values,
-        amount: Number(values.amount),
-        date: values.date.toISOString(),
-      },
-      {
+    const payload = {
+      ...values,
+      amount: Number(values.amount),
+      date: values.date.toISOString(),
+    };
+    if (data) {
+      editMutation.mutate(payload, {
         onSuccess: () => {
           onClose();
         },
-      }
-    );
+      });
+    } else {
+      mutation.mutate(payload, {
+        onSuccess: () => {
+          onClose();
+        },
+      });
+    }
   };
   return (
     <>
@@ -236,7 +277,16 @@ function TransactionForm({ className, initialValues }: FormProps) {
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <Button
+            disabled={loading}
+            type="submit"
+            className="flex w-full items-center gap-x-2"
+          >
+            {data ? "Save Changes" : "Create Transaction"}
+            {loading && (
+              <LoaderCircleIcon size={16} className="text-primary-foreground" />
+            )}
+          </Button>
         </form>
       </Form>
     </>

@@ -14,3 +14,8 @@ export interface AddTransactionPayload {
   date: string;
   status: string;
 }
+
+export interface UpdateTransactionPayload {
+  amount: number;
+  status: string;
+}
