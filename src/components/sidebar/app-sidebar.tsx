@@ -1,4 +1,4 @@
-import { Calendar, Home, ArrowLeftRight, Search, Settings } from "lucide-react";
+import { Home, ArrowLeftRight, Settings } from "lucide-react";
 
 import {
   Sidebar,
@@ -10,6 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import HeaderLogo from "../header-logo";
 
 // Menu items.
 const items = [
@@ -25,11 +26,6 @@ const items = [
   },
 
   {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
     title: "Settings",
     url: "#",
     icon: Settings,
@@ -41,7 +37,9 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            <HeaderLogo />
+          </SidebarGroupLabel>
           <SidebarGroupContent className="mt-6">
             <SidebarMenu className="space-y-4">
               {items.map((item) => (

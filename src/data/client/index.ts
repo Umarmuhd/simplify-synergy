@@ -1,8 +1,4 @@
-import {
-  Transaction,
-  TransactionPaginator,
-  TransactionQueryOptions,
-} from "@/types/transaction";
+import { Transaction, TransactionQueryOptions } from "@/types/transaction";
 import { HttpClient } from "./http-client";
 import { API_ENDPOINTS } from "./api-endpoints";
 import { AddTransactionPayload } from "@/types/transaction";
@@ -18,7 +14,7 @@ class Client {
       //   status,
       ...params
     }: Partial<TransactionQueryOptions>) => {
-      return HttpClient.get<TransactionPaginator>(API_ENDPOINTS.TRANSACTIONS, {
+      return HttpClient.get<Transaction[]>(API_ENDPOINTS.TRANSACTIONS, {
         // searchJoin: "and",
         // with: "shop;type;categories",
         // shop_id,

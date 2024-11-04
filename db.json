@@ -2,11 +2,21 @@
   "transactions": [
     {
       "id": "TRX001",
-      "amount": 1500.0,
+      "amount": 1500,
       "status": "Completed",
-      "date": "2024-10-28",
-      "type": "inflow",
-      "purpose": "Withdrawal"
+      "date": "2024-10-28"
+    },
+    {
+      "id": "958e",
+      "status": "completed",
+      "date": "2024-11-19T23:00:00.000Z",
+      "amount": 1500
+    },
+    {
+      "id": "e07e",
+      "status": "completed",
+      "date": "2024-11-04T12:46:43.465Z",
+      "amount": 5000
     }
   ]
 }

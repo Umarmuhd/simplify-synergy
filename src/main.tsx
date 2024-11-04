@@ -9,13 +9,9 @@ import { TransactionDetails } from "./components/transactions/details.tsx";
 import TransactionPages from "./pages/transactions-page.tsx";
 import { DashboardLayout } from "./components/layouts/dashboard-layout.tsx";
 import client from "./data/client/index.ts";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ModalProvider from "./components/providers/modal.tsx";
+import { Toaster } from "sonner";
 
 const router = createBrowserRouter([
   {
@@ -57,6 +53,8 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     {/* // Provide the client to your App */}
     <QueryClientProvider client={queryClient}>
+      <ModalProvider />
+      <Toaster richColors />
       <RouterProvider router={router} />
     </QueryClientProvider>
   </StrictMode>

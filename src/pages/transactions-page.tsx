@@ -1,139 +1,247 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import React from "react";
+// import { Outlet } from "react-router-dom";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+// import { Input } from "@/components/ui/input";
+// import { Search } from "lucide-react";
+// import { Badge } from "@/components/ui/badge";
 
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import TransactionList from "@/components/transactions/list";
 import { useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
+// import { cn } from "@/lib/utils";
 import { useTransactionsQuery } from "@/data/transactions";
+// import { TransactionFormModal } from "@/components/transactions/transaction-form";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  // Loader2,
+  Plus,
+} from "lucide-react";
+
+import { columns } from "../components/transactions/columns";
+import { DataTable } from "../components/data-table";
+// import { Skeleton } from "@/components/ui/skeleton";
+
+// import {
+//   ColumnDef,
+//   ColumnFiltersState,
+//   SortingState,
+//   VisibilityState,
+//   flexRender,
+//   getCoreRowModel,
+//   getFilteredRowModel,
+//   getPaginationRowModel,
+//   getSortedRowModel,
+//   useReactTable,
+// } from "@tanstack/react-table";
+// import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+
+// import { Checkbox } from "@/components/ui/checkbox";
+// import {
+//   DropdownMenu,
+//   DropdownMenuCheckboxItem,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuLabel,
+//   DropdownMenuSeparator,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
+
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+// } from "@/components/ui/table";
+import Header from "@/components/header";
+import { useTransaction } from "@/components/transactions/hooks/use-transaction";
+
+type Transactions = {
+  id: string;
+  amount: number;
+  status: "pending" | "processing" | "success" | "failed";
+  email: string;
+};
+
+export const transactions: Transactions[] = [
+  {
+    id: "728ed52f",
+    amount: 100,
+    status: "pending",
+    email: "m@example.com",
+  },
+  {
+    id: "489e1d42",
+    amount: 125,
+    status: "processing",
+    email: "example@gmail.com",
+  },
+  // ...
+];
+
+// export const columns: ColumnDef<Transactions>[] = [
+//   {
+//     id: "select",
+//     header: ({ table }) => (
+//       <Checkbox
+//         checked={
+//           table.getIsAllPageRowsSelected() ||
+//           (table.getIsSomePageRowsSelected() && "indeterminate")
+//         }
+//         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+//         aria-label="Select all"
+//       />
+//     ),
+//     cell: ({ row }) => (
+//       <Checkbox
+//         checked={row.getIsSelected()}
+//         onCheckedChange={(value) => row.toggleSelected(!!value)}
+//         aria-label="Select row"
+//       />
+//     ),
+//     enableSorting: false,
+//     enableHiding: false,
+//   },
+//   {
+//     accessorKey: "status",
+//     header: "Status",
+//     cell: ({ row }) => (
+//       <div className="capitalize">{row.getValue("status")}</div>
+//     ),
+//   },
+//   {
+//     accessorKey: "email",
+//     header: ({ column }) => {
+//       return (
+//         <Button
+//           variant="ghost"
+//           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+//         >
+//           Email
+//           <ArrowUpDown className="ml-2 h-4 w-4" />
+//         </Button>
+//       );
+//     },
+//     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+//   },
+//   {
+//     accessorKey: "amount",
+//     header: () => <div className="text-right">Amount</div>,
+//     cell: ({ row }) => {
+//       const amount = parseFloat(row.getValue("amount"));
+
+//       // Format the amount as a dollar amount
+//       const formatted = new Intl.NumberFormat("en-US", {
+//         style: "currency",
+//         currency: "USD",
+//       }).format(amount);
+
+//       return <div className="text-right font-medium">{formatted}</div>;
+//     },
+//   },
+//   {
+//     id: "actions",
+//     enableHiding: false,
+//     cell: ({ row }) => {
+//       const payment = row.original;
+
+//       return (
+//         <DropdownMenu>
+//           <DropdownMenuTrigger asChild>
+//             <Button variant="ghost" className="h-8 w-8 p-0">
+//               <span className="sr-only">Open menu</span>
+//               <MoreHorizontal className="h-4 w-4" />
+//             </Button>
+//           </DropdownMenuTrigger>
+//           <DropdownMenuContent align="end">
+//             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+//             <DropdownMenuItem
+//               onClick={() => navigator.clipboard.writeText(payment.id)}
+//             >
+//               Copy payment ID
+//             </DropdownMenuItem>
+//             <DropdownMenuSeparator />
+//             <DropdownMenuItem>View customer</DropdownMenuItem>
+//             <DropdownMenuItem>View payment details</DropdownMenuItem>
+//           </DropdownMenuContent>
+//         </DropdownMenu>
+//       );
+//     },
+//   },
+// ];
 
 export default function TransactionPages({ props }: any) {
   const { pathname } = useLocation();
+  // const [open, setOpen] = React.useState(false);
   console.log("pathname", pathname);
   console.log("props", props);
 
-  // const { transactions, error, loading } = useTransactionsQuery({});
+  // const [sorting, setSorting] = React.useState<SortingState>([]);
+  // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+  //   []
+  // );
+  // const [columnVisibility, setColumnVisibility] =
+  //   React.useState<VisibilityState>({});
+  // const [rowSelection, setRowSelection] = React.useState({});
+
+  // const table = useReactTable({
+  //   data: transactions,
+  //   columns,
+  //   onSortingChange: setSorting,
+  //   onColumnFiltersChange: setColumnFilters,
+  //   getCoreRowModel: getCoreRowModel(),
+  //   getPaginationRowModel: getPaginationRowModel(),
+  //   getSortedRowModel: getSortedRowModel(),
+  //   getFilteredRowModel: getFilteredRowModel(),
+  //   onColumnVisibilityChange: setColumnVisibility,
+  //   onRowSelectionChange: setRowSelection,
+  //   state: {
+  //     sorting,
+  //     columnFilters,
+  //     columnVisibility,
+  //     rowSelection,
+  //   },
+  // });
+
+  const { transactions, error, loading } = useTransactionsQuery({});
+
+  console.log({ transactions, error, loading });
+
+  const { onOpen } = useTransaction();
 
   return (
-    <div className="py-4">
-      <h2 className="text-xl">Transactions</h2>
-      <div className="flex justify-between items-center mt-6 mb-8">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input className="pl-10" placeholder="Search" />
-        </div>
-        <Button>+ Add Transaction</Button>
-      </div>
+    <>
+      <Header />
+      <main className="ox-3 lg:px-14">
+        <div className="max-x-screen-2xl mx-auto w-full pb-10 -mt-24">
+          <Card className="border-none drop-shadow-sm">
+            <CardHeader className="gap-y-2 lg:flex-row lg:items-center lg:justify-between">
+              <CardTitle className="text-xl line-clamp-1">
+                Transactions page
+              </CardTitle>
+              <Button onClick={onOpen} size="sm">
+                <Plus className="size-4 mr-2" />
+                Add new
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <DataTable
+                columns={columns}
+                data={transactions}
+                filterKey="amount"
+                onDelete={(row) => {
+                  console.log("row", row);
 
-      <div className={cn("grid gap-6 grid-cols-8")}>
-        <div
-          className={
-            pathname.split("/").length > 3 ? "col-span-5" : "col-span-8"
-          }
-        >
-          {/* <Card>
-            <div className="divide-y">
-              {transactions.map((transaction) => (
-                <div
-                  key={transaction.id}
-                  className="flex items-center justify-between p-4 hover:bg-gray-50"
-                >
-                  <div className="flex items-center gap-4">
-                    <Avatar>
-                      <AvatarImage src="/placeholder.svg" />
-                      <AvatarFallback>
-                        {transaction.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-medium">{transaction.name}</div>
-                      <div className="text-sm text-gray-500">
-                        {transaction.email}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div>
-                      <div className="text-sm text-gray-500">
-                        Last transaction date
-                      </div>
-                      <div>{transaction.date}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-500">
-                        Last transaction amount
-                      </div>
-                      <div>
-                        {transaction.amount} → {transaction.convertedAmount}
-                      </div>
-                    </div>
-                    <Badge
-                      variant={
-                        transaction.status === "COMPLETED"
-                          ? "default"
-                          : transaction.status === "PENDING"
-                          ? "secondary"
-                          : "destructive"
-                      }
-                      className="ml-4"
-                    >
-                      {transaction.status}
-                    </Badge>
-                    <Button variant="ghost" size="icon">
-                      <MoreVertical className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card> */}
-          <Card>
-            <Table className="bg-white">
-              <TableCaption>A list of your recent invoices.</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px] py-3">Invoice</TableHead>
-                  <TableHead className="py-3">Status</TableHead>
-                  <TableHead className="py-3">Method</TableHead>
-                  <TableHead className="text-right py-3">Amount</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TransactionList transactions={[]} />
-              <TableFooter>
-                <TableRow>
-                  <TableCell className="py-3" colSpan={3}>
-                    Total
-                  </TableCell>
-                  <TableCell className="text-right py-3">$2,500.00</TableCell>
-                </TableRow>
-              </TableFooter>
-            </Table>
+                  // const ids = row.map((r) => r.original.id);
+                  // deleteAccounts.mutate({ ids });
+                }}
+                // disabled={isDisabled}
+              />
+            </CardContent>
           </Card>
         </div>
-        {pathname.split("/").length > 3 && (
-          <div className="col-span-3 w-full bg-red-500">
-            <Outlet />
-          </div>
-        )}
-      </div>
-    </div>
+      </main>
+    </>
   );
 }

@@ -1,9 +1,9 @@
+import { LoginForm } from "./components/login-form";
+
 export default function App() {
   return (
-    <>
-      <div id="sidebar">
-        <h1>React Router Contacts</h1>
-      </div>
-    </>
+    <div className="flex h-screen w-full items-center justify-center px-4">
+      <LoginForm />
+    </div>
   );
 }
