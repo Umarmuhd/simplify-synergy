@@ -73,21 +73,28 @@ const formSchema = z.object({
 export function TransactionFormModal() {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const { isOpen, onClose } = useTransaction();
+  const { isOpen, onClose, data } = useTransaction();
 
-  const { data } = useTransaction();
+  console.log({ data });
 
   const transactionQuery = useGetTransaction(data?.id);
 
   const isLoading = transactionQuery.isLoading;
 
   const initialValues = {
-    amount: transactionQuery.data?.amount ?? "",
-    date: transactionQuery.data?.date
-      ? new Date(transactionQuery.data.date)
-      : new Date(),
-    status: transactionQuery.data?.status ?? "",
+    amount:
+      data && transactionQuery.data
+        ? String(transactionQuery.data?.amount)
+        : "0",
+    date:
+      data && transactionQuery.data?.date
+        ? new Date(transactionQuery.data.date)
+        : new Date(),
+    status:
+      data && transactionQuery.data?.status ? transactionQuery.data.status : "",
   };
+
+  console.log(initialValues);
 
   if (isDesktop) {
     return (
@@ -193,6 +200,7 @@ function TransactionForm({ className, initialValues }: FormProps) {
       });
     }
   };
+
   return (
     <>
       <Form {...form}>

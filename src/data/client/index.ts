@@ -49,6 +49,11 @@ class Client {
     delete({ id }: { id: string }) {
       return HttpClient.delete<boolean>(`${API_ENDPOINTS.TRANSACTIONS}/${id}`);
     },
+    async bulk_delete({ ids }: { ids: string[] }) {
+      for await (const id of ids) {
+        HttpClient.delete<boolean>(`${API_ENDPOINTS.TRANSACTIONS}/${id}`);
+      }
+    },
     get({ id }: GetParams) {
       return HttpClient.get<Transaction>(`${API_ENDPOINTS.TRANSACTIONS}/${id}`);
     },

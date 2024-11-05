@@ -1,16 +1,10 @@
 {
   "transactions": [
     {
-      "id": "TRX001",
-      "amount": 1500,
-      "status": "Completed",
-      "date": "2024-10-28"
-    },
-    {
-      "id": "b6bf",
+      "id": "a56c",
       "status": "completed",
-      "date": "2024-11-11T23:00:00.000Z",
-      "amount": 600
+      "date": "2024-11-05T18:32:54.232Z",
+      "amount": 5000
     }
   ]
 }

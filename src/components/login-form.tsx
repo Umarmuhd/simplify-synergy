@@ -46,6 +46,7 @@ export function LoginForm() {
     // ✅ This will be type-safe and validated.
     if (values.email === "admin@bolt.xyz" && values.password === "Pa$$w0rd!") {
       toast.success("Login successful!");
+      localStorage.setItem("token", "1234");
       navigate("/dashboard/transactions", { replace: true });
     } else {
       toast.error("Invalid email or password");

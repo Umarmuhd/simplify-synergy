@@ -6,9 +6,12 @@ import { Button } from "@/components/ui/button";
 // import { Search } from "lucide-react";
 // import { Badge } from "@/components/ui/badge";
 
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 // import { cn } from "@/lib/utils";
-import { useTransactionsQuery } from "@/data/transactions";
+import {
+  useBulkDeleteTransactions,
+  useTransactionsQuery,
+} from "@/data/transactions";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -170,42 +173,14 @@ export const transactions: Transactions[] = [
 //   },
 // ];
 
-export default function TransactionPages({ props }: any) {
-  const { pathname } = useLocation();
-  // const [open, setOpen] = React.useState(false);
-  console.log("pathname", pathname);
-  console.log("props", props);
-
-  // const [sorting, setSorting] = React.useState<SortingState>([]);
-  // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-  //   []
-  // );
-  // const [columnVisibility, setColumnVisibility] =
-  //   React.useState<VisibilityState>({});
-  // const [rowSelection, setRowSelection] = React.useState({});
-
-  // const table = useReactTable({
-  //   data: transactions,
-  //   columns,
-  //   onSortingChange: setSorting,
-  //   onColumnFiltersChange: setColumnFilters,
-  //   getCoreRowModel: getCoreRowModel(),
-  //   getPaginationRowModel: getPaginationRowModel(),
-  //   getSortedRowModel: getSortedRowModel(),
-  //   getFilteredRowModel: getFilteredRowModel(),
-  //   onColumnVisibilityChange: setColumnVisibility,
-  //   onRowSelectionChange: setRowSelection,
-  //   state: {
-  //     sorting,
-  //     columnFilters,
-  //     columnVisibility,
-  //     rowSelection,
-  //   },
-  // });
-
+export default function TransactionPages() {
   const { transactions, error, loading } = useTransactionsQuery({});
 
   console.log({ transactions, error, loading });
+
+  const deleteTransactions = useBulkDeleteTransactions();
+
+  const isDisabled = deleteTransactions.isPending;
 
   const { onOpen } = useTransaction();
 
@@ -219,7 +194,7 @@ export default function TransactionPages({ props }: any) {
               <CardTitle className="text-xl line-clamp-1">
                 Transactions page
               </CardTitle>
-              <Button onClick={onOpen} size="sm">
+              <Button onClick={() => onOpen(null)} size="sm">
                 <Plus className="size-4 mr-2" />
                 Add new
               </Button>
@@ -228,14 +203,12 @@ export default function TransactionPages({ props }: any) {
               <DataTable
                 columns={columns}
                 data={transactions}
-                filterKey="amount"
+                filterKey="id"
                 onDelete={(row) => {
-                  console.log("row", row);
-
-                  // const ids = row.map((r) => r.original.id);
-                  // deleteAccounts.mutate({ ids });
+                  const ids = row.map((r) => r.original.id);
+                  deleteTransactions.mutate({ ids });
                 }}
-                // disabled={isDisabled}
+                disabled={isDisabled}
               />
             </CardContent>
           </Card>

@@ -2,7 +2,6 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Outlet } from "react-router-dom";
 import App from "./App.tsx";
 import ErrorPage from "./pages/error-page.jsx";
 import { TransactionDetails } from "./components/transactions/details.tsx";
@@ -12,6 +11,7 @@ import client from "./data/client/index.ts";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ModalProvider from "./components/providers/modal.tsx";
 import { Toaster } from "sonner";
+import ProtectedRoutes from "./protected-routes.tsx";
 
 const router = createBrowserRouter([
   {
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: (
       <DashboardLayout>
-        <Outlet />
+        <ProtectedRoutes />,
       </DashboardLayout>
     ),
     children: [

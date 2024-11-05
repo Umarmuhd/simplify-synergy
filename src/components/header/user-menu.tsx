@@ -115,7 +115,12 @@ export function UserMenu() {
           <span>API</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            localStorage.removeItem("token");
+            window.location.reload();
+          }}
+        >
           <LogOut />
           <span>Log out</span>
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

@@ -112,3 +112,25 @@ export const useDeleteTransaction = (id?: string) => {
 
   return mutation;
 };
+
+export const useBulkDeleteTransactions = () => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation<unknown, Error, { ids: string[] }>({
+    mutationFn: async (json) => {
+      return await client.transactions.bulk_delete({
+        ids: json.ids,
+      });
+    },
+    onSuccess: () => {
+      toast.success("Transactions deleted");
+      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.TRANSACTIONS] });
+      // TODO: Also invalidate summary
+    },
+    onError: () => {
+      toast.error("Failed to delete account");
+    },
+  });
+
+  return mutation;
+};
